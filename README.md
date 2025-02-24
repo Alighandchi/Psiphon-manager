@@ -14,25 +14,11 @@ sudo apt update && sudo apt install -y wget tmux
 1. ابتدا اسکریپت را دانلود و اجرا کنید:
 
 ```bash
-chmod +x psiphon_setup.sh
-./psiphon_setup.sh
+bash <(curl -Ls https://raw.githubusercontent.com/Alighandchi/vps-manager/refs/heads/main/psiphon_setup.sh)
 ```
 
 2. بعد از اجرای اسکریپت، تمامی سرورها در مسیر `/root/Psiphon-Server/` ساخته خواهند شد.
-
-3. برای اجرای سرورها از طریق `tmux`، هرکدام را به‌صورت دستی اجرا کنید:
-
-```bash
-tmux new -s AT
-cd /root/Psiphon-Server/AT-9001/
-chmod +x psiphon-tunnel-core-x86_64-AT
-./psiphon-tunnel-core-x86_64-AT -config ./psiphon.config
-```
-
-4. می‌توانید سایر لوکیشن‌ها را نیز به همین روش اجرا کنید. برای مشاهده لیست لوکیشن‌ها می‌توانید اسکریپت را بررسی کنید.
-
-## شخصی‌سازی
-در صورت نیاز به تغییرات خاص، می‌توانید اسکریپت `psiphon_setup.sh` را ویرایش کرده و مقادیر مورد نظر خود را تغییر دهید.
+3. برای برسی لوکیشن های فعال از منو شماره 4 رو انتخاب کنید.
 
 ## به‌روزرسانی
 برای به‌روزرسانی سرورها، می‌توانید اسکریپت را مجدداً اجرا کنید و فایل‌های جدید دریافت خواهند شد.
