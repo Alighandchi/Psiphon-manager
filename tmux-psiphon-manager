@@ -1,0 +1,65 @@
+
+#!/bin/bash
+
+# لیست کشورها (نام سشن‌ها)
+COUNTRIES=("AT" "AU" "BE" "BG" "BR" "CA" "CH" "CZ" "DE" "DK" "EE" "ES" "FI" "FR" "GB" "GR" "HR" "HU" "ID" "IE" "IN" "IT" "JP" "LV" "LT" "NL" "NO" "PL" "PT" "RO" "RS" "SE" "SG" "SK" "UA" "US")
+
+# مسیر پایه سرور
+BASE_PATH="/root/Psiphon-Server"
+
+# درخواست از کاربر برای انتخاب عملیات
+echo "چه کاری می‌خواهید انجام دهید؟"
+echo "1) ساختن سشن‌های tmux"
+echo "2) حذف سشن‌های tmux"
+read -p "لطفاً عدد مربوطه را وارد کنید (1 یا 2): " ACTION
+
+# تابع برای ایجاد سشن‌ها
+start_sessions() {
+    for COUNTRY in "${COUNTRIES[@]}"; do
+        PORT=$((9000 + ${#COUNTRY}))  # تولید شماره پورت بر اساس تعداد حروف کشور
+
+        SESSION_NAME="$COUNTRY"
+        SERVER_PATH="$BASE_PATH/$COUNTRY-$PORT"
+        EXECUTABLE="psiphon-tunnel-core-x86_64-$COUNTRY"
+        CONFIG_FILE="psiphon.config"
+
+        # بررسی وجود پوشه سرور
+        if [ -d "$SERVER_PATH" ]; then
+            echo "Starting tmux session: $SESSION_NAME"
+
+            tmux new-session -d -s "$SESSION_NAME" "
+                cd $SERVER_PATH &&
+                chmod +x $EXECUTABLE &&
+                ./$EXECUTABLE -config ./$CONFIG_FILE
+            "
+        else
+            echo "❌ Directory $SERVER_PATH does not exist, skipping $SESSION_NAME..."
+        fi
+    done
+
+    echo "✅ All tmux sessions started!"
+}
+
+# تابع برای حذف سشن‌ها
+stop_sessions() {
+    for COUNTRY in "${COUNTRIES[@]}"; do
+        if tmux has-session -t "$COUNTRY" 2>/dev/null; then
+            echo "Killing tmux session: $COUNTRY"
+            tmux kill-session -t "$COUNTRY"
+        else
+            echo "⚠️ Session $COUNTRY not found, skipping..."
+        fi
+    done
+
+    echo "✅ All specified tmux sessions have been terminated!"
+}
+
+# اجرای عملیات بر اساس ورودی کاربر
+if [[ "$ACTION" == "1" ]]; then
+    start_sessions
+elif [[ "$ACTION" == "2" ]]; then
+    stop_sessions
+else
+    echo "❌ ورودی نامعتبر! لطفاً 1 یا 2 را وارد کنید."
+    exit 1
+fi
