@@ -69,12 +69,32 @@ stop_tmux_session() {
     echo -e "${RED}Stopped Psiphon session: $LOC${NC}"
 }
 
+# حذف Psiphon
+uninstall_psiphon() {
+    echo -e "${RED}Uninstalling Psiphon...${NC}"
+    if [ -d "$BASE_DIR" ]; then
+        # توقف تمامی جلسات tmux
+        for LOC in "${LOCATIONS[@]}"; do
+            if tmux has-session -t "$LOC" 2>/dev/null; then
+                tmux kill-session -t "$LOC"
+            fi
+        done
+        # حذف پوشه اصلی
+        rm -rf "$BASE_DIR"
+        echo -e "${GREEN}Psiphon uninstalled successfully!${NC}"
+    else
+        echo -e "${YELLOW}Psiphon is not installed.${NC}"
+    fi
+    sleep 2
+    show_menu
+}
+
 # نمایش منو
 show_menu() {
     clear
     echo -e "${YELLOW}═════════════════════════════════════════════${NC}"
     echo -e "${GREEN} Psiphon Server Manager v1.0${NC}"
-    echo -e " GitHub: github.com/YourUsername/Psiphon-Manager"
+    echo -e " GitHub: github.com/Alighandchi/Psiphon-Manager"
     echo -e "${YELLOW}═════════════════════════════════════════════${NC}"
 
     if [ -d "$BASE_DIR" ]; then
@@ -82,21 +102,23 @@ show_menu() {
     else
         echo -e " Psiphon: ${RED}Not Installed${NC}"
     fi
-    echo -e " Start Socks Server:Port : 127.0.0.1:${BASE_PORT}"
+    echo -e " First Socks IP/Port: 127.0.0.1:${BASE_PORT}"
     echo -e "${YELLOW}═════════════════════════════════════════════${NC}"
     echo -e " 1 - Setup server"
     echo -e " 2 - Start all servers"
     echo -e " 3 - Stop all servers"
     echo -e " 4 - Show running sessions"
-    echo -e " 5 - Exit"
+    echo -e " 5 - Uninstall Psiphon"
+    echo -e " 6 - Exit"
     echo -e "${YELLOW}═════════════════════════════════════════════${NC}"
-    read -p "Enter Your Choice [1-5]: " OPTION
+    read -p "Enter Your Choice [1-6]: " OPTION
     case $OPTION in
         1) install_dependencies; setup_folders ;;
         2) for ((i=0; i<${#LOCATIONS[@]}; i++)); do start_tmux_session "${LOCATIONS[$i]}" $((BASE_PORT + i)); done ;;
         3) for LOC in "${LOCATIONS[@]}"; do stop_tmux_session "$LOC"; done ;;
         4) tmux list-sessions ;;
-        5) exit 0 ;;
+        5) uninstall_psiphon ;;
+        6) exit 0 ;;
         *) echo -e "${RED}Invalid option!${NC}" && sleep 1 && show_menu ;;
     esac
 }
