@@ -8,7 +8,7 @@
 
 
 ```bash
-bash <(curl -Ls https://raw.githubusercontent.com/Alighandchi/vps-manager/refs/heads/main/psiphon_setup.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/Alighandchi/Psiphon-manager/refs/heads/main/psiphon_setup.sh)
 ```
 
 2. بعد از اجرای اسکریپت، تمامی سرورها در مسیر `/root/Psiphon-Server/` ساخته خواهند شد.
