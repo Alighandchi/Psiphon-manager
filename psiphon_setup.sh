@@ -8,7 +8,7 @@ BIN_URL="https://raw.githubusercontent.com/Psiphon-Labs/psiphon-tunnel-core-bina
 
 install_dependencies() {
     echo "Installing dependencies..."
-    apt update && apt install -y tmux wget curl
+    apt install -y tmux wget curl
 }
 
 setup_folders() {
